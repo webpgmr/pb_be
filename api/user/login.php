@@ -9,7 +9,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 // get database connection
 include_once '../config/database.php';
  
-// instantiate product object
+// instantiate object
 include_once '../objects/user.php';
 include_once '../objects/token.php';
  
@@ -24,14 +24,14 @@ $data = json_decode(file_get_contents("php://input"));
 // make sure data is not empty
 if( !empty($data->username) && !empty($data->password)) {
  
-    // set product property values
+    // set property values
     $user->username = $data->username;
     $user->email = $data->username;
     $user->password = $data->password;
 
     $stmt = $user->login();
     $num = $stmt->rowCount();
-    // create the product
+
     if($num > 0){
 
         // get retrieved row
@@ -44,13 +44,20 @@ if( !empty($data->username) && !empty($data->password)) {
         $token->user_id = $user_id;
         $user_token = $token->updateToken();
 
-        // set response code - 200 created
-        http_response_code(200); 
-        echo json_encode(array("message" => "User logged Successfully.", "token" => $user_token));
+        if ($user_token != '') {
+            // set response code - 200 ok
+            http_response_code(200); 
+            echo json_encode(array("message" => "User logged Successfully.", "user_id" => $user_id, "token" => $user_token, "status_code" => "200"));
+        } else {
+            // set response code - 503 service unavailable
+            http_response_code(503); 
+            echo json_encode(array("message" => "Unable to login.", "status_code" => "503"));
+        }
+        
     } else{ 
-        // set response code - 503 service unavailable
-        http_response_code(503); 
-        echo json_encode(array("message" => "Unable to login."));
+        // set response code - Bad Request
+        http_response_code(400);
+        echo json_encode(array("message" => "Unable to login.", "status_code" => "400"));
     }
 }else{
  

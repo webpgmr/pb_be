@@ -57,7 +57,7 @@ class Token{
         $stmt = $this->conn->prepare($query);
     
         $this->token = '';
-        $this->active=1;
+        $this->active=0;
     
         // bind values
         $stmt->bindParam(":user_id", $this->user_id);
@@ -79,7 +79,8 @@ class Token{
                     " . $this->table_name . "
                 SET
                     token = :token,
-                    updated_on = CURRENT_TIMESTAMP                   
+                    updated_on = CURRENT_TIMESTAMP,
+                    active = 1                 
                 WHERE
                     user_id = :user_id";
         
@@ -100,5 +101,31 @@ class Token{
         return '';
     }
 
+    // token  expiry
+    function expireToken() {
+        // update query
+        $query = "UPDATE
+                    " . $this->table_name . "
+                SET
+                    updated_on = CURRENT_TIMESTAMP,
+                    active = 0               
+                WHERE
+                    user_id = :user_id";
+        
+        // prepare query statement
+        $stmt = $this->conn->prepare($query);
+
+        // bind new values
+        $stmt->bindParam(':user_id', $this->user_id);
+    
+        // execute the query
+        if($stmt->execute()){
+            return true;
+        }
+    
+        return false;
+    }
+
 
 }
+?>

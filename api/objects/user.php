@@ -24,9 +24,12 @@ class User{
     function validateUser(){
         // select all query
         $query = "SELECT
-            u.id
-        FROM
-            " . $this->table_name . " u WHERE username=:username OR email=:email";
+                        u.id
+                    FROM
+                        " . $this->table_name . 
+                        " u WHERE username=:username OR 
+                        email=:email and 
+                        active=1";
 
         // prepare query statement
         $stmt = $this->conn->prepare($query);
@@ -45,7 +48,10 @@ class User{
         $query = "INSERT INTO
                     " . $this->table_name . "
                 SET
-                    username=:username, password=:password, email=:email, active=:active";
+                    username=:username, 
+                    password=:password, 
+                    email=:email, 
+                    active=:active";
     
         // prepare query
         $stmt = $this->conn->prepare($query);
@@ -75,9 +81,13 @@ class User{
     function login(){
         // select all query
         $query = "SELECT
-            u.id
-        FROM
-            " . $this->table_name . " u WHERE password=:password AND username=:username OR email=:username";
+                    u.id
+                    FROM
+                " . $this->table_name . 
+                    " u WHERE 
+                        password=:password AND 
+                        username=:username OR 
+                        email=:username";
 
         // prepare query statement
         $stmt = $this->conn->prepare($query);
@@ -92,11 +102,14 @@ class User{
 
         return $stmt;
     }
-    // delete the product
+    
+    // delete the user
     function delete(){
     
         // delete query
-        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+        $query = "DELETE FROM " . 
+            $this->table_name . 
+            " WHERE id = ?";
     
         // prepare query
         $stmt = $this->conn->prepare($query);
@@ -116,5 +129,34 @@ class User{
         
     }
 
+    // change password
+    function changePassword () {
+        // update query
+        $query = "UPDATE FROM " . 
+                    $this->table_name . "
+                    SET
+                        password =:password,
+                    WHERE
+                        id = :user_id";
+        
+        // prepare query
+        $stmt = $this->conn->prepare($query);
+    
+        // sanitize
+        $this->id=htmlspecialchars(strip_tags($this->user_id));
+        $this->password = base64_encode($this->password);
+    
+        // bind id of record to update
+        $stmt->bindParam(":user_id", $this->user_id);
+        $stmt->bindParam(":password", $this->password);
+    
+        // execute query
+        if($stmt->execute()){
+            return true;
+        }
+    
+        return false;
+    }
 
 }
+?>

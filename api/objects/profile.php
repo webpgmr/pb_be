@@ -30,9 +30,21 @@ class Profile{
     function getUserProfile(){
          // select all query
         $query = "SELECT
-                    p.id, p.firstname, p.lastname, p.mobile, p.landline, p.dob, p.sex, p.street, p.state, p.country, p.pincode
+                    p.id, 
+                    p.firstname, 
+                    p.lastname, 
+                    p.mobile, 
+                    p.landline, 
+                    p.dob, 
+                    p.sex, 
+                    p.street, 
+                    p.state, 
+                    p.country, 
+                    p.pincode
                 FROM
-                    " . $this->table_name. " WHERE user_id = ?";
+                    " . $this->table_name. 
+                    " WHERE 
+                        user_id = ?";
 
         // prepare query statement
         $stmt = $this->conn->prepare($query);
@@ -66,7 +78,17 @@ class Profile{
         $query = "INSERT INTO
                     " . $this->table_name . "
                 SET
-                    user_id=:user_id, firstname=:firstname, lastname=:lastname, mobile=:mobile, landline=:landline, dob=:dob, sex=:sex, street=:street, state=:state, country=:country, pincode=:pincode";
+                    user_id=:user_id, 
+                    firstname=:firstname, 
+                    lastname=:lastname, 
+                    mobile=:mobile, 
+                    landline=:landline, 
+                    dob=:dob, 
+                    sex=:sex, 
+                    street=:street, 
+                    state=:state, 
+                    country=:country, 
+                    pincode=:pincode";
     
         // prepare query
         $stmt = $this->conn->prepare($query);
@@ -103,5 +125,59 @@ class Profile{
         
     }
 
+    // update Profile
+    function updateProfile(){
+        // query to insert record
+        $query = "UPDATE FROM
+                    " . $this->table_name . "
+                SET
+                    firstname=:firstname, 
+                    lastname=:lastname, 
+                    mobile=:mobile, 
+                    landline=:landline, 
+                    dob=:dob, 
+                    sex=:sex, 
+                    street=:street, 
+                    state=:state, 
+                    country=:country, 
+                    pincode=:pincode 
+                WHERE                
+                    userid=:user_id";
+    
+        // prepare query
+        $stmt = $this->conn->prepare($query);
+    
+        // sanitize
+        $this->firstname=htmlspecialchars(strip_tags($this->firstname));
+        $this->lastname=htmlspecialchars(strip_tags($this->lastname));
+        $this->mobile=htmlspecialchars(strip_tags($this->mobile));
+        $this->landline=htmlspecialchars(strip_tags($this->landline));
+        $this->street=htmlspecialchars(strip_tags($this->street));
+        $this->state=htmlspecialchars(strip_tags($this->state));
+        $this->country=htmlspecialchars(strip_tags($this->country));
+        $this->pincode=htmlspecialchars(strip_tags($this->pincode));        
+    
+        // bind values
+        $stmt->bindParam(":user_id", $this->user_id);
+        $stmt->bindParam(":firstname", $this->firstname);
+        $stmt->bindParam(":lastname", $this->lastname);
+        $stmt->bindParam(":mobile", $this->mobile);
+        $stmt->bindParam(":landline", $this->landline);
+        $stmt->bindParam(":dob", $this->dob);
+        $stmt->bindParam(":sex", $this->sex);
+        $stmt->bindParam(":street", $this->street);
+        $stmt->bindParam(":state", $this->state);
+        $stmt->bindParam(":country", $this->country);
+        $stmt->bindParam(":pincode", $this->pincode);
+    
+        // execute query
+        if($stmt->execute()){
+            return true;
+        }
+    
+        return false;
+    }
+
 
 }
+?>

@@ -13,7 +13,7 @@ include_once '../objects/user.php';
 include_once '../objects/profile.php';
 include_once '../objects/token.php';
 
-// instantiate database and product object
+// instantiate database and object
 $database = new Database();
 $db = $database->getConnection();
 
@@ -30,7 +30,7 @@ $data = json_decode(file_get_contents("php://input"));
 //     "lastname2": "b",
 //     "dob":"2011-10-01"
 //     }');
-// set product property values
+// set property values
 $user->username = isset($data->username) ? $data->username : '';
 $user->password = isset($data->password) ? $data->password: '';
 $user->email = isset($data->email) ? $data->email: '';
@@ -49,11 +49,9 @@ $stmt = $user->validateUser();
 $num = $stmt->rowCount();
 
 if ($num > 0) {
-    // set response code - 503 service unavailable
-    http_response_code(503);
- 
-    // tell the user
-    echo json_encode(array("message" => "User already exist."));
+    // set response code - 400 bad request
+    http_response_code(400);
+    echo json_encode(array("message" => "User already exist.", "status_code" => "400"));
 }else {
     // query user
     $last_id = $user->createUser();
@@ -66,10 +64,9 @@ if ($num > 0) {
         $tkn = $token->generateToken();
         if ($smt) {
             // on success
-            // set response code - 200 OK
-            http_response_code(200);
-            // tell the user
-            echo json_encode(array("message" => "User Created."));
+            // set response code - 201 OK
+            http_response_code(201);
+            echo json_encode(array("message" => "User Created.", "status_code" => "201"));
 
         }else {
             // delete created User
@@ -78,10 +75,8 @@ if ($num > 0) {
             
             // set response code - 503 service unavailable
             http_response_code(503);
-    
-            // tell the user
-            echo json_encode(array("message" => "Unable to create user."));
+            echo json_encode(array("message" => "Unable to create user...Please try later", "status_code" => "503"));
         }
     }
 }
-
+?>
