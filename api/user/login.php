@@ -21,6 +21,7 @@ $token = new Token($db);
 // get posted data
 $data = json_decode(file_get_contents("php://input"));
 
+// print_r($data);die();
 // make sure data is not empty
 if( !empty($data->username) && !empty($data->password)) {
  
@@ -31,7 +32,6 @@ if( !empty($data->username) && !empty($data->password)) {
 
     $stmt = $user->login();
     $num = $stmt->rowCount();
-
     if($num > 0){
 
         // get retrieved row
