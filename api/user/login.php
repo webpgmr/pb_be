@@ -27,7 +27,6 @@ if( !empty($data->username) && !empty($data->password)) {
  
     // set property values
     $user->username = $data->username;
-    $user->email = $data->username;
     $user->password = $data->password;
 
     $stmt = $user->login();

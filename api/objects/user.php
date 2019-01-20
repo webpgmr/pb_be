@@ -81,13 +81,13 @@ class User{
     function login(){
         // select all query
         $query = "SELECT
-                    u.id
+                    id
                     FROM
                 " . $this->table_name . 
-                    " u WHERE 
+                    " WHERE 
                         password=:password AND 
-                        username=:username OR 
-                        email=:username";
+                        :username IN ( username, email ) AND
+                        active=1";
 
         // prepare query statement
         $stmt = $this->conn->prepare($query);
@@ -95,7 +95,6 @@ class User{
         $this->password = base64_encode($this->password);
 
         $stmt->bindParam(":username", $this->username);
-        $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":password", $this->password);
         // execute query
         $stmt->execute();
@@ -136,6 +135,7 @@ class User{
                     $this->table_name . "
                     SET
                         password =:password,
+                        updated_on= CURRENT_TIMESTAMP
                     WHERE
                         id = :user_id";
         
@@ -143,11 +143,11 @@ class User{
         $stmt = $this->conn->prepare($query);
     
         // sanitize
-        $this->id=htmlspecialchars(strip_tags($this->user_id));
+        $this->id=htmlspecialchars(strip_tags($this->id));
         $this->password = base64_encode($this->password);
     
         // bind id of record to update
-        $stmt->bindParam(":user_id", $this->user_id);
+        $stmt->bindParam(":user_id", $this->id);
         $stmt->bindParam(":password", $this->password);
     
         // execute query
