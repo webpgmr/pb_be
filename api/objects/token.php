@@ -22,7 +22,7 @@ class Token{
     function getUserToken(){
          // select all query
         $query = "SELECT
-                    p.token
+                    token
                 FROM
                     " . $this->table_name. " WHERE user_id = ? and active = 1";
 
@@ -69,7 +69,7 @@ class Token{
             return $this->token;
         }
     
-        return '';        
+        return $this->token;        
     }
 
     // update token 

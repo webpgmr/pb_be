@@ -50,19 +50,19 @@ if( !empty($data->username) && !empty($data->password)) {
             echo json_encode(array("message" => "User logged Successfully.", "user_id" => $user_id, "token" => $user_token, "status_code" => "200"));
         } else {
             // set response code - 503 service unavailable
-            http_response_code(503); 
+            http_response_code(200); 
             echo json_encode(array("message" => "Unable to login.", "status_code" => "503"));
         }
         
     } else{ 
         // set response code - Bad Request
-        http_response_code(400);
+        http_response_code(200);
         echo json_encode(array("message" => "Unable to login.", "status_code" => "400"));
     }
 }else{
  
     // set response code - 400 bad request
-    http_response_code(400);
+    http_response_code(200);
     echo json_encode(array("message" => "Unable to Login. Data is incomplete."));
 }
 ?>

@@ -26,20 +26,22 @@ class Contact{
         $this->conn = $db;
     }
 
-    // read User
+    // get Contact 
     function getUserContacts(){
          // select all query
         $query = "SELECT
-                    p.id,
-                    p.firstname,
-                    p.lastname, 
-                    p.email,
-                    p.mobile, 
-                    p.landline, 
-                    p.street, 
-                    p.state, 
-                    p.country, 
-                    p.pincode
+                    id,
+                    firstname,
+                    lastname, 
+                    email,
+                    dob,
+                    sex, 
+                    mobile,
+                    landline, 
+                    street, 
+                    state, 
+                    country, 
+                    pincode
                 FROM
                     " . $this->table_name. 
                     " WHERE 
@@ -57,7 +59,7 @@ class Contact{
         return $stmt;
     }
 
-    // create User
+    // create Contact
     function createContact(){
     
         // query to insert record
@@ -68,12 +70,16 @@ class Contact{
                     firstname=:firstname, 
                     lastname=:lastname, 
                     mobile=:mobile, 
+                    dob=:dob,
+                    sex=:sex,
                     landline=:landline, 
                     email=:email,
                     street=:street, 
                     state=:state, 
                     country=:country, 
-                    pincode=:pincode";
+                    pincode=:pincode,
+                    created_on= CURRENT_TIMESTAMP,
+                    active=1";
     
         // prepare query
         $stmt = $this->conn->prepare($query);
@@ -82,10 +88,10 @@ class Contact{
         $this->firstname=htmlspecialchars(strip_tags($this->firstname));
         $this->lastname=htmlspecialchars(strip_tags($this->lastname));
         $this->mobile=htmlspecialchars(strip_tags($this->mobile));
+        $this->email=htmlspecialchars(strip_tags($this->email));
         $this->landline=htmlspecialchars(strip_tags($this->landline));
         $this->street=htmlspecialchars(strip_tags($this->street));
         $this->state=htmlspecialchars(strip_tags($this->state));
-        $this->country=htmlspecialchars(strip_tags($this->country));
         $this->pincode=htmlspecialchars(strip_tags($this->pincode));        
     
         // bind values
@@ -95,6 +101,8 @@ class Contact{
         $stmt->bindParam(":mobile", $this->mobile);
         $stmt->bindParam(":landline", $this->landline);
         $stmt->bindParam(":email", $this->email);
+        $stmt->bindParam(":dob", $this->dob);
+        $stmt->bindParam(":sex", $this->sex);
         $stmt->bindParam(":street", $this->street);
         $stmt->bindParam(":state", $this->state);
         $stmt->bindParam(":country", $this->country);
@@ -109,16 +117,18 @@ class Contact{
         
     }
 
-    // update Profile
+    // update Contact
     function updateContact(){
         // query to insert record
-        $query = "UPDATE FROM
+        $query = "UPDATE 
                     " . $this->table_name . "
                 SET
                     firstname=:firstname, 
                     lastname=:lastname, 
                     mobile=:mobile, 
                     landline=:landline, 
+                    dob=:dob,
+                    sex=:sex,
                     email=:email, 
                     street=:street, 
                     state=:state, 
@@ -146,10 +156,13 @@ class Contact{
         $stmt->bindParam(":mobile", $this->mobile);
         $stmt->bindParam(":landline", $this->landline);
         $stmt->bindParam(":email", $this->email);
+        $stmt->bindParam(":dob", $this->dob);
+        $stmt->bindParam(":sex", $this->sex);
         $stmt->bindParam(":street", $this->street);
         $stmt->bindParam(":state", $this->state);
         $stmt->bindParam(":country", $this->country);
         $stmt->bindParam(":pincode", $this->pincode);
+        $stmt->bindParam(":id", $this->id);
     
         // execute query
         if($stmt->execute()){
@@ -159,6 +172,29 @@ class Contact{
         return false;
     }
 
-
+    // delete Contact
+    function deleteContact(){
+        // query to insert record
+        $query = "DELETE FROM 
+                    " . $this->table_name . "
+                  WHERE                
+                    id= ?";
+    
+        // prepare query
+        $stmt = $this->conn->prepare($query);
+    
+        // sanitize
+        $this->id=htmlspecialchars(strip_tags($this->id));
+    
+        // bind id of record to delete
+        $stmt->bindParam(1, $this->id);
+    
+        // execute query
+        if($stmt->execute()){
+            return true;
+        }
+    
+        return false;
+    }
 }
 ?>

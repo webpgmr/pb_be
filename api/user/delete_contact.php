@@ -28,36 +28,22 @@ $current_token = $headers['Authorization'];
 $contact = new Contact($db);
 $token = new Token($db);
 
-// set contact information
-$contact->firstname = isset($data->firstname)? $data->firstname : '';
-$contact->lastname = isset($data->lastname) ? $data->lastname: '';
-$contact->mobile = isset($data->mobile) ? $data->mobile : '';
-$contact->landline = isset($data->landline) ? $data->landline : '';
-$contact->dob = isset($data->dob) ? $data->dob : '';
-$contact->sex = isset($data->sex) ? $data->sex : '';
-$contact->email = isset($data->email) ? $data->email : '';
-$contact->street = isset($data->street) ? $data->street : '';
-$contact->state = isset($data->state) ? $data->state : '';
-$contact->country = isset($data->country) ? $data->country : '';
-$contact->pincode = isset($data->pincode) ? $data->pincode : '';
-
-
 //checking user exist already
 $token->user_id = $data->user_id;
 $user_token = $token->getUserToken();
 
 if ($user_token === $current_token) {    
-    $contact->user_id = $data->user_id;
-    $smt = $contact->createContact();
+    $contact->id = $data->id;
+    $smt = $contact->deleteContact();
     if ($smt) {
         // set response code - 200 OK
         http_response_code(200);
         // tell the user
-        echo json_encode(array("message" => "Add contact Successfully.", "status_code" => "200"));
+        echo json_encode(array("message" => "Deleted contact Successfully.", "status_code" => "200"));
     } else {
         // set response code - 503 service unavialable
         http_response_code(200);
-        echo json_encode(array("message" => "Unable to add contact ...Please try after some time", "status_code" => "503"));
+        echo json_encode(array("message" => "Unable to Delete contact ...Please try after some time", "status_code" => "503"));
     }    
 } else {
     // set response code - 401 Unauthorised

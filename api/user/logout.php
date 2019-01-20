@@ -34,12 +34,12 @@ if( !empty($data->user_id) ) {
         echo json_encode(array("message" => "User Loggedout Successfully.", "status_code" => "200"));        
     } else{ 
         // set response code - Bad Request
-        http_response_code(400);
+        http_response_code(200);
         echo json_encode(array("message" => "Unable to Logout.", "status_code" => "400"));
     }
 }else{ 
     // set response code - 400 bad request
-    http_response_code(400);
+    http_response_code(200);
     echo json_encode(array("message" => "Unable to Logout. Data is incomplete."));
 }
 

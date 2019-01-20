@@ -19,6 +19,10 @@ $db = $database->getConnection();
 // get user information
 $data = json_decode(file_get_contents("php://input"));
 
+// getting token from header
+$headers = apache_request_headers();
+$current_token = $headers['Authorization'];
+
 // initializing contact object
 $contact = new Contact($db);
 $token = new Token($db);
@@ -39,7 +43,7 @@ $contact->pincode = isset($data->pincode) ? $data->pincode : '';
 $token->user_id = $data->user_id;
 $user_token = $token->getUserToken();
 
-if ($user_token === $data->token) {    
+if ($user_token === $current_token) {    
     $contact->id = $data->id;
     $smt = $contact->updateContact();
     if ($smt) {
@@ -49,12 +53,12 @@ if ($user_token === $data->token) {
         echo json_encode(array("message" => "Updated contact Successfully.", "status_code" => "200"));
     } else {
         // set response code - 503 service unavialable
-        http_response_code(503);
+        http_response_code(200);
         echo json_encode(array("message" => "Unable to Update contact ...Please try after some time", "status_code" => "503"));
     }    
 } else {
     // set response code - 401 Unauthorised
-    http_response_code(401);
+    http_response_code(200);
     echo json_encode(array("message" => "Unauthorised Access", "status_code" => "401"));
 
 }

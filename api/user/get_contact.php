@@ -16,6 +16,10 @@ include_once '../objects/token.php';
 $database = new Database();
 $db = $database->getConnection();
 
+// getting token from header
+$headers = apache_request_headers();
+$current_token = $headers['Authorization'];
+
 // get user information
 $data = json_decode(file_get_contents("php://input"));
 
@@ -24,13 +28,13 @@ $contact = new Contact($db);
 $token = new Token($db);
 
 // set contact information
-$contact->user_id = isset($data->user_id)? $data->user_id : '';
+$contact->user_id = isset($data->user_id)? $data->user_id : 0;
 
 //checking user exist already
 $token->user_id = $data->user_id;
 $user_token = $token->getUserToken();
 
-if ($user_token === $data->token) {    
+if ($user_token === $current_token) {    
     $contact->user_id = $data->user_id;
     $smt = $contact->getUserContacts();
     $num = $smt->rowCount();
@@ -51,6 +55,8 @@ if ($user_token === $data->token) {
                 "lastname" => $lastname,
                 "mobile" => $mobile,
                 "landline" => $landline,
+                "dob" => $dob,
+                "sex" => $sex,
                 "email" => $email,
                 "street" => $street,
                 "state" => $state,
@@ -62,15 +68,15 @@ if ($user_token === $data->token) {
     
         // set response code - 200 OK
         http_response_code(200);    
-        echo json_encode(array("result" => $products_arr, "status_code"=>"200"));
+        echo json_encode(array("data" => $contacts_arr, "status_code"=>"200"));
     } else {
         // set response code - 200 OK
         http_response_code(200);    
-        echo json_encode(array("result" => "", "status_code"=>"200"));
+        echo json_encode(array("data" => "", "status_code"=>"200"));
     }     
 } else {
     // set response code - 401 Unauthorised
-    http_response_code(401);
+    http_response_code(200);
     echo json_encode(array("message" => "Unauthorised Access", "status_code" => "401"));
 }
 ?>

@@ -132,7 +132,7 @@ class User{
     // change password
     function changePassword () {
         // update query
-        $query = "UPDATE FROM " . 
+        $query = "UPDATE " . 
                     $this->table_name . "
                     SET
                         password =:password,

@@ -43,7 +43,7 @@ class Profile{
                     p.pincode
                 FROM
                     " . $this->table_name. 
-                    " WHERE 
+                    " p WHERE 
                         user_id = ?";
 
         // prepare query statement
@@ -81,14 +81,7 @@ class Profile{
                     user_id=:user_id, 
                     firstname=:firstname, 
                     lastname=:lastname, 
-                    mobile=:mobile, 
-                    landline=:landline, 
-                    dob=:dob, 
-                    sex=:sex, 
-                    street=:street, 
-                    state=:state, 
-                    country=:country, 
-                    pincode=:pincode";
+                    dob=:dob";
     
         // prepare query
         $stmt = $this->conn->prepare($query);
@@ -96,25 +89,12 @@ class Profile{
         // sanitize
         $this->firstname=htmlspecialchars(strip_tags($this->firstname));
         $this->lastname=htmlspecialchars(strip_tags($this->lastname));
-        $this->mobile=htmlspecialchars(strip_tags($this->mobile));
-        $this->landline=htmlspecialchars(strip_tags($this->landline));
-        $this->street=htmlspecialchars(strip_tags($this->street));
-        $this->state=htmlspecialchars(strip_tags($this->state));
-        $this->country=htmlspecialchars(strip_tags($this->country));
-        $this->pincode=htmlspecialchars(strip_tags($this->pincode));        
     
         // bind values
         $stmt->bindParam(":user_id", $this->user_id);
         $stmt->bindParam(":firstname", $this->firstname);
         $stmt->bindParam(":lastname", $this->lastname);
-        $stmt->bindParam(":mobile", $this->mobile);
-        $stmt->bindParam(":landline", $this->landline);
         $stmt->bindParam(":dob", $this->dob);
-        $stmt->bindParam(":sex", $this->sex);
-        $stmt->bindParam(":street", $this->street);
-        $stmt->bindParam(":state", $this->state);
-        $stmt->bindParam(":country", $this->country);
-        $stmt->bindParam(":pincode", $this->pincode);
     
         // execute query
         if($stmt->execute()){
@@ -127,8 +107,8 @@ class Profile{
 
     // update Profile
     function updateProfile(){
-        // query to insert record
-        $query = "UPDATE FROM
+        // query to update record
+        $query = "UPDATE
                     " . $this->table_name . "
                 SET
                     firstname=:firstname, 
@@ -140,14 +120,14 @@ class Profile{
                     street=:street, 
                     state=:state, 
                     country=:country, 
-                    pincode=:pincode 
+                    pincode=:pincode,
+                    updated_on= CURRENT_TIMESTAMP
                 WHERE                
-                    userid=:user_id";
+                    user_id=:user_id";
     
         // prepare query
         $stmt = $this->conn->prepare($query);
-    
-        // sanitize
+
         $this->firstname=htmlspecialchars(strip_tags($this->firstname));
         $this->lastname=htmlspecialchars(strip_tags($this->lastname));
         $this->mobile=htmlspecialchars(strip_tags($this->mobile));
@@ -170,11 +150,13 @@ class Profile{
         $stmt->bindParam(":country", $this->country);
         $stmt->bindParam(":pincode", $this->pincode);
     
+
+        
         // execute query
         if($stmt->execute()){
             return true;
         }
-    
+
         return false;
     }
 

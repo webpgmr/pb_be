@@ -23,15 +23,17 @@ $user = new User($db);
 // get user information
 $data = json_decode(file_get_contents("php://input"));
 // $data = json_decode('{
-//     "username": "bijib10",
+//     "username": "bijib19",
 //     "password": "test123",
-//     "email": "bijib10@test.com",
-//     "firstname":"biji",
+//     "email": "bijib19@test.com",
+//     "firstname":"bijnni",
 //     "lastname2": "b",
 //     "dob":"2011-10-01"
 //     }');
+// print_r($data);die();
+
 // set property values
-$user->username = isset($data->username) ? $data->username : '';
+$user->username = isset($data->name) ? $data->name : '';
 $user->password = isset($data->password) ? $data->password: '';
 $user->email = isset($data->email) ? $data->email: '';
 
@@ -50,12 +52,11 @@ $num = $stmt->rowCount();
 
 if ($num > 0) {
     // set response code - 400 bad request
-    http_response_code(400);
+    http_response_code(200);
     echo json_encode(array("message" => "User already exist.", "status_code" => "400"));
 }else {
     // query user
     $last_id = $user->createUser();
-
     if ( $last_id > 0 ) {
         $profile->user_id = $last_id;
         $smt = $profile->createProfile();
@@ -65,7 +66,7 @@ if ($num > 0) {
         if ($smt) {
             // on success
             // set response code - 201 OK
-            http_response_code(201);
+            http_response_code(200);
             echo json_encode(array("message" => "User Created.", "status_code" => "201"));
 
         }else {
@@ -74,7 +75,7 @@ if ($num > 0) {
             $user->delete();
             
             // set response code - 503 service unavailable
-            http_response_code(503);
+            http_response_code(200);
             echo json_encode(array("message" => "Unable to create user...Please try later", "status_code" => "503"));
         }
     }

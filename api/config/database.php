@@ -20,6 +20,7 @@ class Database{
             echo "Connection error: " . $exception->getMessage();
         }
 
+        
         return $this->conn;
     }    
 }
